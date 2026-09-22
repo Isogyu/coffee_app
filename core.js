@@ -221,6 +221,63 @@
     return store;
   }
 
+  /* ================= バックアップ(エクスポート/インポート) ================= */
+  var BACKUP_APP_ID = "blackApronQuiz";
+  var EXTRA_KEYS = ["blackApronQuiz.theme", "blackApronQuiz.lastBackupAt"];
+  var EXPORT_KEYS = Object.keys(KEYS).map(function (k) { return KEYS[k]; }).concat(EXTRA_KEYS);
+
+  /** localStorageの学習データをまとめたバックアップオブジェクトを返す */
+  function exportData(backend) {
+    var data = {};
+    EXPORT_KEYS.forEach(function (key) {
+      var raw;
+      try { raw = backend.getItem(key); } catch (e) { raw = null; }
+      if (raw != null) {
+        try { data[key] = JSON.parse(raw); } catch (e) { data[key] = raw; }
+      }
+    });
+    return {
+      app: BACKUP_APP_ID,
+      schemaVersion: SCHEMA_VERSION,
+      exportedAt: Date.now(),
+      data: data
+    };
+  }
+
+  /**
+   * インポート対象JSONの検証。問題なければnull、問題があれば理由の文字列を返す。
+   * 壊れたファイルで既存データを上書きしないためのガード。
+   */
+  function validateBackup(obj) {
+    if (!obj || typeof obj !== "object") return "JSONオブジェクトではありません";
+    if (obj.app !== BACKUP_APP_ID) return "このアプリのバックアップではありません";
+    if (!obj.data || typeof obj.data !== "object" || Array.isArray(obj.data))
+      return "バックアップのデータ部が不正です";
+    var wrong = obj.data[KEYS.wrong];
+    if (wrong != null && (typeof wrong !== "object" || wrong == null))
+      return "復習データの形式が不正です";
+    var stats = obj.data[KEYS.stats];
+    if (stats != null && (typeof stats !== "object" ||
+        typeof stats.answered !== "number" || typeof stats.correct !== "number"))
+      return "統計データの形式が不正です";
+    var attempts = obj.data[KEYS.attempts];
+    if (attempts != null && !Array.isArray(attempts)) return "履歴データの形式が不正です";
+    var srs = obj.data[KEYS.srs];
+    if (srs != null && (typeof srs !== "object" || Array.isArray(srs)))
+      return "SRSデータの形式が不正です";
+    return null;
+  }
+
+  /** 検証済みバックアップをバックエンドへ書き戻す。validateBackupを通してから呼ぶこと */
+  function importData(backend, obj) {
+    var err = validateBackup(obj);
+    if (err) return err;
+    Object.keys(obj.data).forEach(function (key) {
+      backend.setItem(key, JSON.stringify(obj.data[key]));
+    });
+    return null;
+  }
+
   /* ================= 公開 ================= */
   g.Core = {
     SCHEMA_VERSION: SCHEMA_VERSION,
@@ -232,6 +289,11 @@
     shuffle: shuffle,
     judge: judge,
     sm2Next: sm2Next,
-    createStore: createStore
+    createStore: createStore,
+    BACKUP_APP_ID: BACKUP_APP_ID,
+    EXPORT_KEYS: EXPORT_KEYS,
+    exportData: exportData,
+    validateBackup: validateBackup,
+    importData: importData
   };
 })(typeof window !== "undefined" ? window : globalThis);

@@ -13,6 +13,8 @@
 var RANDOM_COUNT = 10;
 var EXAM_COUNT = 30;
 var EXAM_PASS_RATE = 80;
+var LAST_BACKUP_KEY = "blackApronQuiz.lastBackupAt";
+var BACKUP_WARN_DAYS = 7;
 var store = Core.createStore(window.localStorage);
 store.migrate();
 
@@ -49,6 +51,15 @@ function findCoffee(id) {
 function findQuestion(id) {
   return QUESTION_DATA.filter(function (q) { return q.id === id; })[0];
 }
+function lastBackupAt() {
+  try { return +(localStorage.getItem(LAST_BACKUP_KEY) || 0); } catch (e) { return 0; }
+}
+function fmtDate(ts) {
+  if (!ts) return "未作成";
+  var d = new Date(ts);
+  return d.getFullYear() + "/" + (d.getMonth() + 1) + "/" + d.getDate() +
+    " " + ("0" + d.getHours()).slice(-2) + ":" + ("0" + d.getMinutes()).slice(-2);
+}
 
 /* ---------- 状態 ---------- */
 var state = {
@@ -80,7 +91,22 @@ function navHtml() {
     '<a href="#/timeline">年表</a>' +
     '<a href="#/stats">分析</a>' +
     '<a href="#/exam">模擬試験</a>' +
+    '<a href="#/data">データ</a>' +
   '</nav>';
+}
+
+/* バックアップが7日以上古い(または未作成)場合の警告バナー */
+function backupBannerHtml() {
+  var stats = store.getStats();
+  if (stats.answered === 0) return ""; // まだ学習していない
+  var last = lastBackupAt();
+  var stale = !last || (Date.now() - last > BACKUP_WARN_DAYS * 86400000);
+  if (!stale) return "";
+  return '<div class="backup-banner" role="alert">' +
+    '<span>⚠ 学習データのバックアップが' + (last ? "7日以上" : "一度も") + 'ありません。' +
+    '端末のデータ消去で失われる可能性があります。</span>' +
+    '<button class="btn btn-small" data-action="backup-now">今すぐバックアップ</button>' +
+  '</div>';
 }
 
 /* ===== ホーム画面 ===== */
@@ -97,6 +123,7 @@ function showHome() {
   }).join("");
 
   render(
+    backupBannerHtml() +
     '<div class="card hero">' +
       '<div class="hero-count">' + QUESTION_DATA.length + '<span> 問収録</span></div>' +
       '<div class="hero-desc">4択クイズ + 解説で、試験対策を効率よく</div>' +
@@ -600,6 +627,88 @@ function showTimeline() {
   );
 }
 
+/* ===== データ管理(バックアップ/復元) ===== */
+function downloadBackup() {
+  var obj = Core.exportData(localStorage);
+  var d = new Date();
+  var fname = "be-quiz-backup-" + d.getFullYear() +
+    ("0" + (d.getMonth() + 1)).slice(-2) + ("0" + d.getDate()).slice(-2) + ".json";
+  var blob = new Blob([JSON.stringify(obj, null, 2)], { type: "application/json" });
+  var url = URL.createObjectURL(blob);
+  var a = document.createElement("a");
+  a.href = url; a.download = fname;
+  document.body.appendChild(a); a.click();
+  document.body.removeChild(a);
+  setTimeout(function () { URL.revokeObjectURL(url); }, 1000);
+  try { localStorage.setItem(LAST_BACKUP_KEY, String(Date.now())); } catch (e) {}
+}
+ACTIONS["backup-now"] = function () {
+  downloadBackup();
+  if (currentView === "data") showData();
+  else showHome();
+};
+ACTIONS["import-pick"] = function () {
+  var inp = document.getElementById("import-file");
+  if (inp) inp.click();
+};
+
+function showData() {
+  var stats = store.getStats();
+  var last = lastBackupAt();
+  render(navHtml() +
+    '<div class="card"><h2 class="page-title">データ管理</h2>' +
+      '<p class="muted">学習データはこの端末のブラウザ(localStorage)に保存されます。' +
+      'ブラウザのデータ消去や端末変更で失われるため、定期的なバックアップをおすすめします。</p>' +
+      '<div class="def-row"><span class="def-k">累計回答数</span><span>' + stats.answered + '問</span></div>' +
+      '<div class="def-row"><span class="def-k">最終バックアップ</span><span>' + esc(fmtDate(last)) + '</span></div>' +
+    '</div>' +
+    '<div class="card">' +
+      '<div class="section-label" style="margin-top:0">バックアップ</div>' +
+      '<p class="muted">全学習データ(成績・復習・SRS・試験履歴・設定)をJSONファイルで保存します。</p>' +
+      '<button class="btn btn-primary btn-block" data-action="backup-now">バックアップをダウンロード</button>' +
+    '</div>' +
+    '<div class="card">' +
+      '<div class="section-label" style="margin-top:0">復元</div>' +
+      '<p class="muted">バックアップファイルを選ぶと、現在のデータを上書きして復元します。' +
+        'ファイルの形式は自動で検証されます。</p>' +
+      '<input type="file" id="import-file" accept=".json,application/json" style="display:none">' +
+      '<button class="btn btn-block" data-action="import-pick">バックアップファイルを選択</button>' +
+      '<div id="import-result" aria-live="polite"></div>' +
+    '</div>',
+    "data"
+  );
+  var inp = document.getElementById("import-file");
+  if (inp) inp.addEventListener("change", function () {
+    var f = inp.files && inp.files[0];
+    if (!f) return;
+    var reader = new FileReader();
+    reader.onload = function () {
+      var msg;
+      try {
+        var obj = JSON.parse(reader.result);
+        var err = Core.validateBackup(obj);
+        if (err) { msg = "このファイルは復元できません: " + err; }
+        else if (!window.confirm("現在の学習データを上書きして復元します。よろしいですか?")) { return; }
+        else {
+          err = Core.importData(localStorage, obj);
+          if (err) { msg = "復元に失敗しました: " + err; }
+          else {
+            document.getElementById("import-result").innerHTML =
+              '<div class="judge ok">復元しました。ホームに戻ります…</div>';
+            setTimeout(function () { location.hash = "#/home"; location.reload(); }, 800);
+            return;
+          }
+        }
+      } catch (e) {
+        msg = "JSONファイルとして読み取れませんでした";
+      }
+      document.getElementById("import-result").innerHTML =
+        '<div class="judge ng">' + esc(msg) + '</div>';
+    };
+    reader.readAsText(f);
+  });
+}
+
 /* ===== フラッシュカード ===== */
 function startFlash() {
   var deck = Core.shuffle((window.TERMS_DATA || []).slice());
@@ -674,6 +783,7 @@ function route() {
     case "timeline": showTimeline(); break;
     case "stats": showStats(); break;
     case "exam": showExam(); break;
+    case "data": showData(); break;
     case "flash": startFlash(); break;
     case "quiz":
       // 進行中のクイズがあればそのまま、なければホーム
@@ -730,6 +840,12 @@ document.addEventListener("keydown", function (e) {
 window.addEventListener("hashchange", route);
 
 /* ===== 初期表示 ===== */
+// ブラウザの自動ストレージ削除を抑制(可能な環境のみ)
+try {
+  if (navigator.storage && navigator.storage.persist) {
+    navigator.storage.persist().catch(function () {});
+  }
+} catch (e) {}
 applyTheme();
 route();
 })();
