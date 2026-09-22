@@ -19,21 +19,35 @@
 
 * { box-sizing: border-box; margin: 0; padding: 0; }
 
+html { -webkit-text-size-adjust: 100%; }
+
 body {
   font-family: "Hiragino Kaku Gothic ProN", "Hiragino Sans", "Noto Sans JP", "Yu Gothic", sans-serif;
   background: var(--bg);
   color: var(--ink);
   line-height: 1.7;
   -webkit-font-smoothing: antialiased;
+  -webkit-tap-highlight-color: transparent;
 }
 
 .app {
   max-width: 720px;
   margin: 0 auto;
   padding: 24px 16px 48px;
+  /* ノッチ・ホームバー端末のセーフエリア対応 */
+  padding-left: calc(16px + env(safe-area-inset-left));
+  padding-right: calc(16px + env(safe-area-inset-right));
+  padding-bottom: calc(48px + env(safe-area-inset-bottom));
   min-height: 100vh;
   display: flex;
   flex-direction: column;
+}
+
+/* タップ遅延の除去・タッチターゲット確保 */
+.btn, .choice, .text-btn {
+  touch-action: manipulation;
+  user-select: none;
+  -webkit-user-select: none;
 }
 
 /* ===== ヘッダー ===== */
@@ -224,9 +238,10 @@ body {
 
 .choice {
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   gap: 12px;
   width: 100%;
+  min-height: 52px;          /* モバイルのタップ領域確保 */
   text-align: left;
   background: var(--card);
   border: 2px solid var(--line);
@@ -253,7 +268,6 @@ body {
   font-size: .75rem;
   font-weight: 700;
   color: var(--ink-sub);
-  margin-top: 1px;
 }
 .choice.correct {
   border-color: var(--correct);
@@ -341,6 +355,16 @@ body {
 
 @media (max-width: 480px) {
   .cat-grid { grid-template-columns: 1fr; }
-  .app { padding: 16px 12px 40px; }
+  .app {
+    padding: 16px 12px 40px;
+    padding-left: calc(12px + env(safe-area-inset-left));
+    padding-right: calc(12px + env(safe-area-inset-right));
+    padding-bottom: calc(40px + env(safe-area-inset-bottom));
+  }
   .card { padding: 18px; }
+  .question-text { font-size: 1rem; }
+  .choice { font-size: .92rem; }
+  .logo-mark { width: 44px; height: 44px; font-size: 22px; }
+  .app-title { font-size: 1.1rem; }
+  .result-score { font-size: 2.6rem; }
 }

@@ -3,14 +3,23 @@
 ブラックエプロン試験(スターバックス コーヒーマスター認定)の出題範囲を元にした
 4択クイズアプリです。ビルド不要・依存なしの静的Webアプリです。
 
-## 起動方法
+## アクセス方法
 
-`index.html` をブラウザで開くだけで動作します。
+### 公開URL(どのデバイスからでもアクセス可能)
+
+GitHub Pagesで公開しています。PC・スマホ・タブレットのブラウザから
+そのままアクセスできます。
+
+**https://isogyu.github.io/coffee_app/**
+
+### ローカルで起動
+
+`index.html` をブラウザで開くだけでも動作します。
 
 ```bash
 open index.html        # macOS
-# またはローカルサーバーで:
-python3 -m http.server 8000   # → http://localhost:8000
+# またはローカルサーバーで(同一Wi-Fi内のスマホからもアクセス可):
+python3 -m http.server 8000   # → http://<PCのIPアドレス>:8000
 ```
 
 ## 機能
@@ -21,6 +30,8 @@ python3 -m http.server 8000   # → http://localhost:8000
 - **ランダム出題** : 全問からランダム10問
 - **復習モード** : 間違えた問題を localStorage に蓄積し、再出題
   (正解すると復習対象から自動で外れます)
+- **スマホ対応** : レスポンシブデザイン・タップ領域確保・セーフエリア対応
+- **PWA対応** : スマホの「ホーム画面に追加」でアプリ化、オフラインでも動作
 
 ## 収録カテゴリ
 
@@ -52,10 +63,14 @@ python3 -m http.server 8000   # → http://localhost:8000
 ## ファイル構成
 
 ```
-index.html    画面の骨格
-style.css     コーヒーテーマのスタイル
-app.js        クイズロジック・画面遷移・localStorage管理
-questions.js  問題データ(50問)
+index.html              画面の骨格
+style.css               コーヒーテーマのスタイル(レスポンシブ)
+app.js                  クイズロジック・画面遷移・localStorage管理
+questions.js            問題データ(51問)
+manifest.webmanifest    PWAマニフェスト
+sw.js                   Service Worker(オフラインキャッシュ)
+icon-*.png              アプリアイコン(gen_icons.jsで生成)
+gen_icons.js            アイコン生成スクリプト(node gen_icons.js)
 ```
 
 ## 注意
