@@ -159,7 +159,8 @@ test("全問題: 正答位置が均等に分散(answer:0偏重の回帰防止)",
     const nq = Core.normalizeQuestion(q);
     nq.answerIds.forEach(id => dist[id] = (dist[id] || 0) + 1);
   }
-  const counts = Object.values(dist);
+  // a〜dのみ比較(5択以上のe以降は分布判定対象外)
+  const counts = ["a", "b", "c", "d"].map(k => dist[k] || 0);
   const max = Math.max(...counts), min = Math.min(...counts);
   // 各位置の差が全体の10%以内
   assert.ok(max - min <= Math.max(1, ALL.length * 0.1),
