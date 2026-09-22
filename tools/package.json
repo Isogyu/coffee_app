@@ -1,0 +1,14 @@
+{
+  "name": "be-quiz-tools",
+  "private": true,
+  "version": "1.0.0",
+  "description": "ブラックエプロン試験クイズ - 開発ツール(スクレイピング/問題生成/検証/テスト)。アプリ本体の依存には含めない",
+  "type": "module",
+  "scripts": {
+    "test": "node --test \"test/*.test.mjs\"",
+    "migrate": "node migrate-questions.mjs",
+    "generate": "node generate-questions.mjs",
+    "validate": "node validate-data.mjs",
+    "scrape": "node scrape-starbucks.mjs"
+  }
+}

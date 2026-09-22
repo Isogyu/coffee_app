@@ -269,6 +269,15 @@ body {
   font-weight: 700;
   color: var(--ink-sub);
 }
+.choice.selected {
+  border-color: var(--accent);
+  background: var(--correct-bg);
+}
+.choice.selected .choice-mark {
+  border-color: var(--accent);
+  background: var(--accent);
+  color: #fff;
+}
 .choice.correct {
   border-color: var(--correct);
   background: var(--correct-bg);
@@ -303,6 +312,23 @@ body {
   color: var(--coffee);
   letter-spacing: .08em;
   margin-bottom: 4px;
+}
+.explanation-src {
+  margin-top: 8px;
+  font-size: .75rem;
+}
+.explanation-src a { color: var(--accent); }
+
+.multi-hint {
+  margin-top: 8px;
+  font-size: .78rem;
+  font-weight: 600;
+  color: var(--accent);
+}
+
+.btn:focus-visible, .choice:focus-visible, .text-btn:focus-visible {
+  outline: 3px solid var(--accent);
+  outline-offset: 2px;
 }
 
 .quiz-actions { margin-top: 18px; }
