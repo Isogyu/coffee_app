@@ -26,6 +26,7 @@
         <h1 class="app-title">ブラックエプロン試験クイズ</h1>
         <p class="app-subtitle">Coffee Master Practice</p>
       </div>
+      <button class="theme-btn" data-action-global="theme" aria-label="テーマ切替(自動/ライト/ダーク)" title="テーマ切替">◐</button>
     </header>
 
     <main id="screen" class="screen"><!-- JSで描画 --></main>
@@ -35,7 +36,12 @@
     </footer>
   </div>
 
-  <!-- データ(classic script: window.QUESTION_DATA へ push される) -->
+  <!-- 構造化マスタ(classic script: window.COFFEE_DATA / REFERENCE_DATA / TERMS_DATA) -->
+  <script src="data/coffees.js"></script>
+  <script src="data/reference.js"></script>
+  <script src="data/terms.js"></script>
+
+  <!-- 問題データ(classic script: window.QUESTION_DATA へ push される) -->
   <script src="data/questions/basic.js"></script>
   <script src="data/questions/origin.js"></script>
   <script src="data/questions/process.js"></script>
@@ -43,6 +49,18 @@
   <script src="data/questions/tasting.js"></script>
   <script src="data/questions/core-coffee.js"></script>
   <script src="data/questions/history.js"></script>
+  <!-- 自動生成(構造化マスタから生成) -->
+  <script src="data/questions/generated-core.js"></script>
+  <script src="data/questions/generated-seasonal.js"></script>
+  <script src="data/questions/generated-service.js"></script>
+  <script src="data/questions/generated-reference.js"></script>
+  <script src="data/questions/generated-terms.js"></script>
+  <!-- 手書き追加 -->
+  <script src="data/questions/manual-basic.js"></script>
+  <script src="data/questions/manual-tasting.js"></script>
+  <script src="data/questions/manual-brewing.js"></script>
+  <script src="data/questions/manual-process.js"></script>
+  <script src="data/questions/manual-history.js"></script>
 
   <script src="core.js"></script>
   <script src="app.js"></script>

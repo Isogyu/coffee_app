@@ -8,7 +8,7 @@
     "test": "node --test \"test/*.test.mjs\"",
     "migrate": "node migrate-questions.mjs",
     "generate": "node generate-questions.mjs",
-    "validate": "node validate-data.mjs",
-    "scrape": "node scrape-starbucks.mjs"
+    "rebalance": "node rebalance-manual.mjs",
+    "validate": "node validate-data.mjs"
   }
 }
