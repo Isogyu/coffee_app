@@ -187,3 +187,52 @@ test("normText: 表記ゆれ(®・中黒・全半角)を吸収", () => {
   assert.equal(Core.normText("カフェ ベロナ®"), Core.normText("カフェベロナ"));
   assert.equal(Core.normText("カフェ・ベロナ"), Core.normText("カフェベロナ"));
 });
+
+/* ---------- バックアップ(エクスポート/インポート) ---------- */
+test("exportData: 全キーをJSON化して含む / importDataで往復復元できる", () => {
+  const src = memBackend({
+    "blackApronQuiz.stats": JSON.stringify({ answered: 42, correct: 30 }),
+    "blackApronQuiz.wrongIds": JSON.stringify({ q1: { misses: 2, streak: 0 } }),
+    "blackApronQuiz.srs": JSON.stringify({ q1: { dueAt: 1 } }),
+    "blackApronQuiz.theme": JSON.stringify("dark")
+  });
+  const backup = Core.exportData(src);
+  assert.equal(backup.app, "blackApronQuiz");
+  assert.equal(backup.schemaVersion, Core.SCHEMA_VERSION);
+  assert.deepEqual(backup.data["blackApronQuiz.stats"], { answered: 42, correct: 30 });
+  assert.deepEqual(backup.data["blackApronQuiz.wrongIds"], { q1: { misses: 2, streak: 0 } });
+  assert.equal(backup.data["blackApronQuiz.theme"], "dark");
+
+  // 空のバックエンドへ復元 → 全データが一致
+  const dst = memBackend();
+  assert.equal(Core.importData(dst, backup), null);
+  const s = Core.createStore(dst);
+  assert.deepEqual(s.getStats(), { answered: 42, correct: 30 });
+  assert.deepEqual(s.getWrongMap(), { q1: { misses: 2, streak: 0 } });
+});
+
+test("validateBackup: 壊れた・別アプリのファイルを拒否", () => {
+  assert.ok(Core.validateBackup(null));
+  assert.ok(Core.validateBackup("text"));
+  assert.ok(Core.validateBackup({ app: "otherApp", data: {} }));
+  assert.ok(Core.validateBackup({ app: "blackApronQuiz" }));                 // dataなし
+  assert.ok(Core.validateBackup({ app: "blackApronQuiz", data: [] }));       // data配列
+  assert.ok(Core.validateBackup({ app: "blackApronQuiz", data: {
+    "blackApronQuiz.stats": { answered: "x" }                                // 型不正
+  }}));
+  assert.ok(Core.validateBackup({ app: "blackApronQuiz", data: {
+    "blackApronQuiz.attempts": "not-array"
+  }}));
+  // 正常系
+  assert.equal(Core.validateBackup(Core.exportData(memBackend())), null);
+});
+
+test("importData: 不正ファイルは書き込まない(既存データ保護)", () => {
+  const dst = memBackend({
+    "blackApronQuiz.stats": JSON.stringify({ answered: 5, correct: 5 })
+  });
+  const err = Core.importData(dst, { app: "evil", data: {} });
+  assert.ok(err);
+  const s = Core.createStore(dst);
+  assert.deepEqual(s.getStats(), { answered: 5, correct: 5 }); // 無傷
+});
