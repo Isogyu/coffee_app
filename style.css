@@ -394,3 +394,214 @@ body {
   .app-title { font-size: 1.1rem; }
   .result-score { font-size: 2.6rem; }
 }
+
+/* ===== ダークモード ===== */
+/* OS設定に追従(デフォルト=data-theme="auto"または未設定) */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #171310;
+    --card: #241d18;
+    --ink: #ece4db;
+    --ink-sub: #b3a498;
+    --accent: #2ea37a;
+    --accent-dark: #1f7a5a;
+    --coffee: #d8b28f;
+    --coffee-light: #8a6a52;
+    --line: #3d322a;
+    --correct: #43c48e;
+    --correct-bg: #16352a;
+    --wrong: #e5735f;
+    --wrong-bg: #3d1f1a;
+    --shadow: 0 2px 10px rgba(0, 0, 0, .35);
+  }
+}
+/* 手動ダーク指定 */
+:root[data-theme="dark"] {
+  --bg: #171310;
+  --card: #241d18;
+  --ink: #ece4db;
+  --ink-sub: #b3a498;
+  --accent: #2ea37a;
+  --accent-dark: #1f7a5a;
+  --coffee: #d8b28f;
+  --coffee-light: #8a6a52;
+  --line: #3d322a;
+  --correct: #43c48e;
+  --correct-bg: #16352a;
+  --wrong: #e5735f;
+  --wrong-bg: #3d1f1a;
+  --shadow: 0 2px 10px rgba(0, 0, 0, .35);
+}
+
+/* ===== アクセシビリティ ===== */
+:focus-visible {
+  outline: 3px solid var(--accent);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* ===== ヘッダーのテーマボタン ===== */
+.app-header { display: flex; align-items: center; gap: 12px; }
+.theme-btn {
+  margin-left: auto;
+  background: var(--card);
+  border: 1px solid var(--line);
+  color: var(--ink);
+  border-radius: 50%;
+  width: 40px; height: 40px;
+  font-size: 1.1rem;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+.theme-btn:hover { background: var(--correct-bg); }
+
+/* ===== サブナビ ===== */
+.subnav {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  margin-bottom: 14px;
+}
+.subnav a {
+  padding: 6px 12px;
+  border-radius: 999px;
+  border: 1px solid var(--line);
+  background: var(--card);
+  color: var(--ink-sub);
+  font-size: .78rem;
+  font-weight: 700;
+  text-decoration: none;
+}
+.subnav a:hover { color: var(--accent); border-color: var(--accent); }
+
+/* ===== ページ共通 ===== */
+.page-title { font-size: 1.25rem; color: var(--coffee); margin-bottom: 8px; }
+.muted { color: var(--ink-sub); font-size: .85rem; }
+.btn-block { width: 100%; text-align: center; display: block; }
+.btn-small {
+  padding: 4px 12px; font-size: .78rem; border-radius: 999px;
+  border: 1px solid var(--accent); color: var(--accent);
+  background: transparent; cursor: pointer; font-family: inherit; font-weight: 700;
+}
+.btn-small:hover { background: var(--accent); color: #fff; }
+.text-input {
+  width: 100%; padding: 12px 14px; font-size: 1rem;
+  border: 1.5px solid var(--line); border-radius: 10px;
+  background: var(--card); color: var(--ink); font-family: inherit;
+}
+.text-input:focus { border-color: var(--accent); outline: none; }
+
+/* ===== 模擬試験 ===== */
+.exam-verdict {
+  font-size: 1.6rem; font-weight: 800; margin-bottom: 6px;
+}
+.exam-verdict.pass { color: var(--correct); }
+.exam-verdict.fail { color: var(--wrong); }
+.exam-row {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 8px 0; border-bottom: 1px solid var(--line); font-size: .85rem;
+}
+.exam-row:last-child { border-bottom: none; }
+.exam-badge { font-weight: 800; padding: 2px 10px; border-radius: 999px; font-size: .75rem; }
+.exam-badge.pass { background: var(--correct-bg); color: var(--correct); }
+.exam-badge.fail { background: var(--wrong-bg); color: var(--wrong); }
+
+/* ===== 苦手分析 ===== */
+.stat-row { margin-bottom: 12px; }
+.stat-row-head {
+  display: flex; justify-content: space-between;
+  font-size: .85rem; font-weight: 700; margin-bottom: 4px;
+}
+.bar {
+  height: 8px; background: var(--line); border-radius: 999px; overflow: hidden;
+}
+.bar-fill { height: 100%; border-radius: 999px; transition: width .4s ease; }
+.bar-fill.good { background: var(--correct); }
+.bar-fill.mid { background: #d69a2d; }
+.bar-fill.bad { background: var(--wrong); }
+.bar-fill.none { background: var(--line); }
+.weak-row {
+  display: flex; align-items: center; gap: 10px;
+  padding: 8px 0; border-bottom: 1px solid var(--line); font-size: .9rem; font-weight: 700;
+}
+.weak-row:last-child { border-bottom: none; }
+.weak-row span:first-child { flex: 1; }
+.weak-rate { color: var(--wrong); font-weight: 800; }
+
+/* ===== 豆図鑑 ===== */
+.pill-row { display: flex; gap: 6px; flex-wrap: wrap; }
+.pill {
+  padding: 5px 12px; border-radius: 999px; font-size: .78rem; font-weight: 700;
+  border: 1px solid var(--line); background: var(--card); color: var(--ink-sub);
+  cursor: pointer; font-family: inherit;
+}
+.pill.on { background: var(--accent); color: #fff; border-color: var(--accent); }
+.bean-grid { display: grid; gap: 10px; }
+.bean-card {
+  display: block; background: var(--card); border: 1px solid var(--line);
+  border-radius: var(--radius); padding: 14px 16px;
+  text-decoration: none; color: var(--ink);
+  box-shadow: var(--shadow);
+}
+.bean-card:hover { border-color: var(--accent); }
+.bean-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 8px; }
+.bean-name { font-weight: 800; font-size: .95rem; }
+.roast-badge {
+  font-size: .68rem; font-weight: 800; padding: 2px 8px; border-radius: 999px;
+  flex-shrink: 0; color: #fff;
+}
+.roast-BLONDE { background: #c9a227; }
+.roast-MEDIUM { background: #8a5a2b; }
+.roast-DARK { background: #3d2314; }
+:root[data-theme="dark"] .roast-DARK { background: #6b4a2e; }
+.bean-kw { font-size: .72rem; font-weight: 800; color: var(--accent); letter-spacing: .05em; margin-top: 4px; }
+.bean-kw-ja { font-size: .8rem; color: var(--ink-sub); }
+.bean-meta { font-size: .75rem; color: var(--ink-sub); margin-top: 6px; }
+.bean-inactive { font-size: .7rem; color: var(--wrong); font-weight: 700; margin-top: 4px; }
+.def-row {
+  display: flex; gap: 12px; padding: 7px 0;
+  border-bottom: 1px solid var(--line); font-size: .88rem;
+}
+.def-row:last-of-type { border-bottom: none; }
+.def-k { width: 130px; flex-shrink: 0; font-weight: 700; color: var(--ink-sub); font-size: .8rem; }
+
+/* ===== 用語集 ===== */
+.term-list { display: grid; gap: 8px; }
+.term-item {
+  background: var(--card); border: 1px solid var(--line);
+  border-radius: 10px; padding: 12px 14px;
+}
+.term-name { font-weight: 800; font-size: .92rem; color: var(--coffee); }
+.term-def { font-size: .82rem; color: var(--ink-sub); margin-top: 3px; }
+
+/* ===== 年表 ===== */
+.timeline { position: relative; padding-left: 20px; }
+.timeline::before {
+  content: ""; position: absolute; left: 5px; top: 6px; bottom: 6px;
+  width: 2px; background: var(--line);
+}
+.tl-item { position: relative; padding: 0 0 18px 16px; }
+.tl-item::before {
+  content: ""; position: absolute; left: -19px; top: 6px;
+  width: 10px; height: 10px; border-radius: 50%;
+  background: var(--accent);
+}
+.tl-year { font-weight: 800; color: var(--accent); font-size: .95rem; }
+.tl-body { font-size: .85rem; color: var(--ink); margin-top: 2px; }
+
+/* ===== フラッシュカード ===== */
+.flashcard {
+  cursor: pointer; text-align: center;
+  min-height: 220px; display: flex; flex-direction: column;
+  align-items: center; justify-content: center; gap: 10px;
+  user-select: none;
+}
+.flashcard:hover { border-color: var(--accent); }
+.flash-face { font-size: 1.3rem; font-weight: 800; line-height: 1.6; }
+.flashcard.flipped .flash-face { font-size: 1rem; font-weight: 600; }
+.flash-hint { font-size: .75rem; color: var(--ink-sub); }
+
+@media (max-width: 480px) {
+  .def-k { width: 96px; }
+  .subnav a { font-size: .72rem; padding: 5px 10px; }
+}
