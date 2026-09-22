@@ -70,6 +70,13 @@
       window.addEventListener("load", () => {
         navigator.serviceWorker.register("sw.js").catch(() => {});
       });
+      // 新しいSWに切り替わったら自動リロード(古いキャッシュが残るのを防ぐ)
+      let reloaded = false;
+      navigator.serviceWorker.addEventListener("controllerchange", () => {
+        if (reloaded) return;
+        reloaded = true;
+        location.reload();
+      });
     }
   </script>
 </body>
