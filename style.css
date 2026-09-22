@@ -1,0 +1,346 @@
+/* ===== ベース ===== */
+:root {
+  --bg: #f5f0ea;
+  --card: #ffffff;
+  --ink: #2d2019;
+  --ink-sub: #7a6a5e;
+  --accent: #00754a;         /* スターバックスグリーン */
+  --accent-dark: #00563a;
+  --coffee: #4b2e1e;
+  --coffee-light: #c9a27e;
+  --line: #e8ddd2;
+  --correct: #00754a;
+  --correct-bg: #e2f3ec;
+  --wrong: #c0392b;
+  --wrong-bg: #fbeae8;
+  --radius: 14px;
+  --shadow: 0 2px 10px rgba(62, 39, 35, .08);
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: "Hiragino Kaku Gothic ProN", "Hiragino Sans", "Noto Sans JP", "Yu Gothic", sans-serif;
+  background: var(--bg);
+  color: var(--ink);
+  line-height: 1.7;
+  -webkit-font-smoothing: antialiased;
+}
+
+.app {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 24px 16px 48px;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ===== ヘッダー ===== */
+.app-header {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 12px 4px 20px;
+}
+.logo-mark {
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  background: var(--accent);
+  color: #fff;
+  font-size: 26px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+.app-title {
+  font-size: 1.25rem;
+  font-weight: 700;
+  letter-spacing: .02em;
+}
+.app-subtitle {
+  font-size: .78rem;
+  color: var(--ink-sub);
+  letter-spacing: .12em;
+  text-transform: uppercase;
+}
+
+.app-footer {
+  margin-top: auto;
+  padding-top: 32px;
+  text-align: center;
+  font-size: .72rem;
+  color: var(--ink-sub);
+}
+
+/* ===== カード ===== */
+.card {
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 24px;
+}
+
+/* ===== ホーム ===== */
+.hero {
+  text-align: center;
+  padding: 28px 24px;
+}
+.hero-count {
+  font-size: 2.6rem;
+  font-weight: 800;
+  color: var(--coffee);
+  line-height: 1.2;
+}
+.hero-count span { font-size: 1rem; font-weight: 600; color: var(--ink-sub); }
+.hero-desc { font-size: .85rem; color: var(--ink-sub); margin-top: 4px; }
+
+.stats-row {
+  display: flex;
+  gap: 10px;
+  margin-top: 16px;
+}
+.stat-chip {
+  flex: 1;
+  background: #faf6f1;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 10px 8px;
+}
+.stat-num { font-size: 1.15rem; font-weight: 700; color: var(--coffee); }
+.stat-label { font-size: .7rem; color: var(--ink-sub); }
+
+.section-label {
+  font-size: .78rem;
+  font-weight: 700;
+  color: var(--ink-sub);
+  letter-spacing: .08em;
+  margin: 24px 4px 10px;
+}
+
+.mode-grid { display: grid; gap: 10px; }
+
+.btn {
+  display: block;
+  width: 100%;
+  border: 1px solid var(--line);
+  background: var(--card);
+  border-radius: var(--radius);
+  padding: 16px 18px;
+  font-size: .95rem;
+  font-family: inherit;
+  color: var(--ink);
+  cursor: pointer;
+  text-align: left;
+  transition: transform .12s ease, box-shadow .12s ease, border-color .12s ease;
+}
+.btn:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: var(--shadow);
+  border-color: var(--coffee-light);
+}
+.btn:disabled { opacity: .45; cursor: not-allowed; }
+
+.btn-primary {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #fff;
+  font-weight: 700;
+  text-align: center;
+}
+.btn-primary:hover:not(:disabled) { background: var(--accent-dark); border-color: var(--accent-dark); }
+
+.btn-main {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+.btn-main .btn-title { font-weight: 700; }
+.btn-main .btn-sub { font-size: .78rem; color: var(--ink-sub); margin-top: 2px; }
+.btn-badge {
+  flex-shrink: 0;
+  font-size: .72rem;
+  font-weight: 700;
+  background: #f0e9e0;
+  color: var(--coffee);
+  border-radius: 999px;
+  padding: 3px 10px;
+}
+.btn-badge.alert { background: var(--wrong-bg); color: var(--wrong); }
+
+.cat-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+.cat-btn { padding: 14px; }
+.cat-btn .cat-name { font-weight: 700; font-size: .9rem; display: block; }
+.cat-btn .cat-count { font-size: .72rem; color: var(--ink-sub); }
+
+/* ===== クイズ ===== */
+.quiz-meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+.quiz-count { font-size: .8rem; font-weight: 700; color: var(--ink-sub); }
+.quiz-cat {
+  font-size: .72rem;
+  font-weight: 700;
+  color: var(--accent);
+  background: var(--correct-bg);
+  border-radius: 999px;
+  padding: 3px 12px;
+}
+
+.progress {
+  height: 8px;
+  background: #ece4da;
+  border-radius: 999px;
+  overflow: hidden;
+  margin-bottom: 18px;
+}
+.progress-bar {
+  height: 100%;
+  background: var(--accent);
+  border-radius: 999px;
+  transition: width .3s ease;
+}
+
+.question-text {
+  font-size: 1.08rem;
+  font-weight: 700;
+  line-height: 1.8;
+  margin-bottom: 20px;
+}
+
+.choices { display: grid; gap: 10px; }
+
+.choice {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  width: 100%;
+  text-align: left;
+  background: var(--card);
+  border: 2px solid var(--line);
+  border-radius: 12px;
+  padding: 14px 16px;
+  font-size: .95rem;
+  font-family: inherit;
+  color: var(--ink);
+  cursor: pointer;
+  transition: border-color .12s ease, background .12s ease;
+  line-height: 1.6;
+}
+.choice:hover:not(:disabled) { border-color: var(--coffee-light); background: #fdfaf6; }
+.choice:disabled { cursor: default; }
+.choice-mark {
+  flex-shrink: 0;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  border: 2px solid var(--line);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: .75rem;
+  font-weight: 700;
+  color: var(--ink-sub);
+  margin-top: 1px;
+}
+.choice.correct {
+  border-color: var(--correct);
+  background: var(--correct-bg);
+}
+.choice.correct .choice-mark { border-color: var(--correct); background: var(--correct); color: #fff; }
+.choice.wrong {
+  border-color: var(--wrong);
+  background: var(--wrong-bg);
+}
+.choice.wrong .choice-mark { border-color: var(--wrong); background: var(--wrong); color: #fff; }
+.choice.dimmed { opacity: .55; }
+
+.judge {
+  margin-top: 18px;
+  font-weight: 800;
+  font-size: 1.05rem;
+}
+.judge.ok { color: var(--correct); }
+.judge.ng { color: var(--wrong); }
+
+.explanation {
+  margin-top: 8px;
+  background: #faf6f1;
+  border-left: 4px solid var(--coffee-light);
+  border-radius: 8px;
+  padding: 14px 16px;
+  font-size: .9rem;
+}
+.explanation-title {
+  font-size: .72rem;
+  font-weight: 700;
+  color: var(--coffee);
+  letter-spacing: .08em;
+  margin-bottom: 4px;
+}
+
+.quiz-actions { margin-top: 18px; }
+
+/* ===== 結果 ===== */
+.result-hero { text-align: center; padding: 12px 0 4px; }
+.result-score {
+  font-size: 3.2rem;
+  font-weight: 800;
+  color: var(--coffee);
+  line-height: 1.1;
+}
+.result-score small { font-size: 1.3rem; color: var(--ink-sub); font-weight: 700; }
+.result-rate { font-size: 1rem; font-weight: 700; color: var(--accent); margin-top: 4px; }
+.result-msg { margin-top: 12px; font-size: .92rem; color: var(--ink-sub); }
+
+.review-list { display: grid; gap: 10px; }
+.review-item {
+  border: 1px solid var(--line);
+  border-left: 4px solid var(--wrong);
+  border-radius: 10px;
+  padding: 14px 16px;
+  background: var(--card);
+}
+.review-q { font-weight: 700; font-size: .9rem; margin-bottom: 6px; }
+.review-a { font-size: .85rem; color: var(--correct); font-weight: 700; }
+.review-a .your-answer { color: var(--wrong); font-weight: 700; }
+.review-e { font-size: .8rem; color: var(--ink-sub); margin-top: 6px; }
+
+.result-actions { display: grid; gap: 10px; margin-top: 22px; }
+
+/* ===== その他 ===== */
+.screen { animation: fadein .25s ease; }
+@keyframes fadein {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: none; }
+}
+
+.text-btn {
+  background: none;
+  border: none;
+  color: var(--ink-sub);
+  font-size: .82rem;
+  font-family: inherit;
+  cursor: pointer;
+  text-decoration: underline;
+  padding: 8px;
+}
+.text-btn:hover { color: var(--ink); }
+
+@media (max-width: 480px) {
+  .cat-grid { grid-template-columns: 1fr; }
+  .app { padding: 16px 12px 40px; }
+  .card { padding: 18px; }
+}
